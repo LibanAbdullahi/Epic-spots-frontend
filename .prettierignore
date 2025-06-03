@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Cache
+.cache/
+.vite/
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Package manager
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Tailwind
+tailwind.config.js
+postcss.config.js
+
+# Vite config
+vite.config.ts 
