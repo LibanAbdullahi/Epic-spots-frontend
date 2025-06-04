@@ -63,6 +63,8 @@
           :key="spot.id"
           :spot="spot"
           @click="$router.push(`/spots/${spot.id}`)"
+          @edit="handleEditSpot"
+          @delete="handleDeleteSpot"
         />
       </div>
 
@@ -84,6 +86,14 @@
       @close="showCreateSpot = false"
       @created="handleSpotCreated"
     />
+    
+    <!-- Edit Spot Modal -->
+    <EditSpotModal
+      v-if="showEditSpot && editingSpot"
+      :spot="editingSpot"
+      @close="showEditSpot = false"
+      @updated="handleSpotUpdated"
+    />
   </div>
 </template>
 
@@ -93,6 +103,7 @@ import { useAuthStore } from '@/stores/auth'
 import { spotsAPI } from '@/services/api'
 import CampingCard from '@/components/CampingCard.vue'
 import CreateSpotModal from '@/components/CreateSpotModal.vue'
+import EditSpotModal from '@/components/EditSpotModal.vue'
 
 interface Spot {
   id: string
@@ -100,7 +111,9 @@ interface Spot {
   description: string
   location: string
   price: number
+  images?: string[]
   owner?: {
+    id?: string
     name: string
   }
 }
@@ -113,6 +126,8 @@ const loading = ref(false)
 const error = ref('')
 const searchQuery = ref('')
 const showCreateSpot = ref(false)
+const showEditSpot = ref(false)
+const editingSpot = ref<Spot | null>(null)
 
 // Computed
 const filteredSpots = computed(() => {
@@ -148,6 +163,30 @@ const searchSpots = () => {
 const handleSpotCreated = () => {
   showCreateSpot.value = false
   fetchSpots() // Refresh the list
+}
+
+const handleEditSpot = (spot: Spot) => {
+  editingSpot.value = spot
+  showEditSpot.value = true
+}
+
+const handleSpotUpdated = () => {
+  showEditSpot.value = false
+  editingSpot.value = null
+  fetchSpots() // Refresh the list
+}
+
+const handleDeleteSpot = async (spotId: string) => {
+  if (!confirm('Are you sure you want to delete this camping spot? This action cannot be undone.')) {
+    return
+  }
+  
+  try {
+    await spotsAPI.delete(spotId)
+    spots.value = spots.value.filter(spot => spot.id !== spotId)
+  } catch (err: any) {
+    alert(err.response?.data?.error || 'Failed to delete spot')
+  }
 }
 
 // Initialize

@@ -69,10 +69,23 @@
         <!-- Spots Grid -->
         <div v-else-if="mySpots.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div v-for="spot in mySpots" :key="spot.id" class="card">
-            <div class="h-32 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg mb-4 flex items-center justify-center">
-              <svg class="w-12 h-12 text-white opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
-              </svg>
+            <div class="h-32 relative rounded-lg mb-4 overflow-hidden">
+              <img 
+                v-if="spot.images && spot.images.length > 0" 
+                :src="getImageUrl(spot.images[0])" 
+                :alt="spot.title"
+                class="w-full h-full object-cover"
+              />
+              <div v-else class="h-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
+                <svg class="w-12 h-12 text-white opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+                </svg>
+              </div>
+              
+              <!-- Image count indicator -->
+              <div v-if="spot.images && spot.images.length > 1" class="absolute top-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded-full text-xs">
+                {{ spot.images.length }} photos
+              </div>
             </div>
             <h3 class="font-semibold text-gray-900 mb-2">{{ spot.title }}</h3>
             <p class="text-gray-600 text-sm mb-2">{{ spot.location }}</p>
@@ -165,6 +178,14 @@
       @close="showCreateSpot = false"
       @created="handleSpotCreated"
     />
+    
+    <!-- Edit Spot Modal -->
+    <EditSpotModal
+      v-if="showEditSpot && editingSpot"
+      :spot="editingSpot"
+      @close="showEditSpot = false"
+      @updated="handleSpotUpdated"
+    />
   </div>
 </template>
 
@@ -172,26 +193,58 @@
 import { ref, computed, onMounted } from 'vue'
 import { spotsAPI, usersAPI } from '@/services/api'
 import CreateSpotModal from '@/components/CreateSpotModal.vue'
+import EditSpotModal from '@/components/EditSpotModal.vue'
+
+interface Spot {
+  id: string
+  title: string
+  description: string
+  location: string
+  price: number
+  images?: string[]
+  owner?: {
+    id?: string
+    name: string
+  }
+}
+
+interface Booking {
+  id: string
+  dateFrom: string
+  dateTo: string
+  spotId: string
+  user?: {
+    name: string
+  }
+  spot?: {
+    title: string
+    price: number
+  }
+}
 
 const activeTab = ref('spots')
 const showCreateSpot = ref(false)
+const showEditSpot = ref(false)
+const editingSpot = ref<Spot | null>(null)
 
 // Data
-const mySpots = ref([])
-const spotBookings = ref([])
+const mySpots = ref<Spot[]>([])
+const spotBookings = ref<Booking[]>([])
 const spotsLoading = ref(false)
 const bookingsLoading = ref(false)
 
 // Computed
-const totalBookings = computed(() => spotBookings.value.length)
+const totalBookings = computed(() => spotBookings.value?.length || 0)
 const totalRevenue = computed(() => {
-  return spotBookings.value.reduce((sum: number, booking: any) => {
+  if (!spotBookings.value) return 0
+  return spotBookings.value.reduce((sum: number, booking: Booking) => {
     return sum + calculateBookingTotal(booking)
   }, 0)
 })
 
-const getSpotBookingsCount = (spotId: number) => {
-  return spotBookings.value.filter((b: any) => b.spotId === spotId).length
+const getSpotBookingsCount = (spotId: string) => {
+  if (!spotBookings.value) return 0
+  return spotBookings.value.filter((b: Booking) => b.spotId === spotId).length
 }
 
 // Methods
@@ -224,17 +277,23 @@ const handleSpotCreated = () => {
   fetchMySpots()
 }
 
-const editSpot = (spot: any) => {
-  // TODO: Implement edit functionality
-  alert('Edit functionality coming soon!')
+const editSpot = (spot: Spot) => {
+  editingSpot.value = spot
+  showEditSpot.value = true
 }
 
-const deleteSpot = async (spotId: number) => {
+const handleSpotUpdated = () => {
+  showEditSpot.value = false
+  editingSpot.value = null
+  fetchMySpots()
+}
+
+const deleteSpot = async (spotId: string) => {
   if (!confirm('Are you sure you want to delete this spot?')) return
   
   try {
     await spotsAPI.delete(spotId)
-    mySpots.value = mySpots.value.filter((s: any) => s.id !== spotId)
+    mySpots.value = mySpots.value.filter((s: Spot) => s.id !== spotId)
   } catch (error: any) {
     alert(error.response?.data?.error || 'Failed to delete spot')
   }
@@ -244,15 +303,24 @@ const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString()
 }
 
-const calculateBookingNights = (booking: any) => {
+const calculateBookingNights = (booking: Booking) => {
   const start = new Date(booking.dateFrom)
   const end = new Date(booking.dateTo)
   return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
 }
 
-const calculateBookingTotal = (booking: any) => {
+const calculateBookingTotal = (booking: Booking) => {
   const nights = calculateBookingNights(booking)
   return nights * (booking.spot?.price || 0)
+}
+
+const getImageUrl = (imagePath: string) => {
+  // If the path already starts with http, return as is
+  if (imagePath.startsWith('http')) {
+    return imagePath
+  }
+  // Otherwise, construct the full URL with the server base URL
+  return `http://localhost:3001${imagePath}`
 }
 
 onMounted(() => {

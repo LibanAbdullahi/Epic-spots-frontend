@@ -46,11 +46,46 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Spot Image and Description -->
         <div class="lg:col-span-2">
-          <!-- Image Placeholder -->
-          <div class="h-64 md:h-96 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center mb-6">
-            <svg class="w-24 h-24 text-white opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
-            </svg>
+          <!-- Image Gallery -->
+          <div class="mb-6">
+            <div v-if="spot.images && spot.images.length > 0" class="space-y-4">
+              <!-- Main Image -->
+              <div class="h-64 md:h-96 rounded-lg overflow-hidden">
+                <img 
+                  :src="getImageUrl(spot.images[currentImageIndex])" 
+                  :alt="spot.title"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              
+              <!-- Thumbnail Images -->
+              <div v-if="spot.images.length > 1" class="grid grid-cols-4 gap-2">
+                <button
+                  v-for="(image, index) in spot.images"
+                  :key="index"
+                  @click="currentImageIndex = index"
+                  :class="[
+                    'h-20 rounded-lg overflow-hidden transition-all',
+                    currentImageIndex === index 
+                      ? 'ring-2 ring-primary-600 opacity-100' 
+                      : 'opacity-70 hover:opacity-100'
+                  ]"
+                >
+                  <img 
+                    :src="getImageUrl(image)" 
+                    :alt="`${spot.title} - Image ${index + 1}`"
+                    class="w-full h-full object-cover"
+                  />
+                </button>
+              </div>
+            </div>
+            
+            <!-- Fallback placeholder -->
+            <div v-else class="h-64 md:h-96 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
+              <svg class="w-24 h-24 text-white opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+              </svg>
+            </div>
           </div>
           
           <!-- Description -->
@@ -141,6 +176,7 @@ interface Spot {
   description: string
   location: string
   price: number
+  images?: string[]
   owner?: {
     name: string
   }
@@ -177,6 +213,8 @@ const totalPrice = computed(() => {
   if (!spot.value || nights.value <= 0) return 0
   return nights.value * spot.value.price
 })
+
+const currentImageIndex = ref(0)
 
 const fetchSpot = async () => {
   loading.value = true
@@ -238,6 +276,15 @@ const handleBooking = async () => {
   } finally {
     bookingLoading.value = false
   }
+}
+
+const getImageUrl = (imagePath: string) => {
+  // If the path already starts with http, return as is
+  if (imagePath.startsWith('http')) {
+    return imagePath
+  }
+  // Otherwise, construct the full URL with the server base URL
+  return `http://localhost:3001${imagePath}`
 }
 
 onMounted(() => {
