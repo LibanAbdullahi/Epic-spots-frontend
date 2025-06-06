@@ -71,4 +71,11 @@ export const usersAPI = {
   getProfile: () => api.get('/users/profile'),
   getOwnerDashboard: () => api.get('/users/owner/dashboard'),
   getOwnerSpots: () => api.get('/users/owner/spots'),
+}
+
+export const ratingsAPI = {
+  getSpotRatings: (spotId: string) => api.get(`/ratings/spot/${spotId}`),
+  createOrUpdate: (data: { spotId: string; rating: number; comment?: string }) => api.post('/ratings', data),
+  delete: (id: string) => api.delete(`/ratings/${id}`),
+  getMyRatings: () => api.get('/ratings/my-ratings')
 } 

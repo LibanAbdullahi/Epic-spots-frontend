@@ -98,6 +98,105 @@
               <p class="text-gray-600 text-sm">Owner since {{ new Date().getFullYear() }}</p>
             </div>
           </div>
+          
+          <!-- Ratings Section -->
+          <div class="card mt-6">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-semibold">Reviews & Ratings</h2>
+              
+              <!-- Average Rating Display -->
+              <div v-if="spot.totalRatings && spot.totalRatings > 0" class="flex items-center space-x-2">
+                <div class="flex space-x-1">
+                  <svg 
+                    v-for="n in 5" 
+                    :key="n" 
+                    :class="[
+                      'w-5 h-5',
+                      n <= Math.round(spot.averageRating || 0) 
+                        ? 'text-yellow-400 fill-current' 
+                        : 'text-gray-300 fill-current'
+                    ]" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                  </svg>
+                </div>
+                <span class="text-lg font-semibold">{{ spot.averageRating?.toFixed(1) }}</span>
+                <span class="text-gray-600">({{ spot.totalRatings }} review{{ spot.totalRatings > 1 ? 's' : '' }})</span>
+              </div>
+            </div>
+            
+            <!-- Loading Reviews -->
+            <div v-if="ratingsLoading" class="text-center py-8">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto"></div>
+              <p class="mt-2 text-gray-600">Loading reviews...</p>
+            </div>
+            
+            <!-- No Reviews State -->
+            <div v-else-if="!ratings.length" class="text-center py-8">
+              <div class="text-gray-400 mb-4">
+                <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">No reviews yet</h3>
+              <p class="text-gray-600">Be the first to share your experience at this spot!</p>
+            </div>
+            
+            <!-- Reviews List -->
+            <div v-else class="space-y-6">
+              <div 
+                v-for="rating in ratings" 
+                :key="rating.id"
+                class="border-b border-gray-100 pb-6 last:border-b-0 last:pb-0"
+              >
+                <div class="flex items-start space-x-4">
+                  <!-- User Avatar -->
+                  <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span class="text-white font-semibold text-sm">
+                      {{ rating.user?.name?.charAt(0).toUpperCase() || '?' }}
+                    </span>
+                  </div>
+                  
+                  <!-- Review Content -->
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between mb-2">
+                      <div>
+                        <h4 class="font-semibold text-gray-900">{{ rating.user?.name || 'Anonymous' }}</h4>
+                        <div class="flex items-center space-x-1 mt-1">
+                          <div class="flex space-x-1">
+                            <svg 
+                              v-for="n in 5" 
+                              :key="n" 
+                              :class="[
+                                'w-4 h-4',
+                                n <= rating.rating 
+                                  ? 'text-yellow-400 fill-current' 
+                                  : 'text-gray-300 fill-current'
+                              ]" 
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                      <span class="text-sm text-gray-500">
+                        {{ formatDate(rating.createdAt) }}
+                      </span>
+                    </div>
+                    
+                    <p v-if="rating.comment" class="text-gray-700 leading-relaxed">
+                      {{ rating.comment }}
+                    </p>
+                    <p v-else class="text-gray-500 italic">
+                      No comment provided
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         
         <!-- Booking Card -->
@@ -168,7 +267,18 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { spotsAPI, bookingsAPI } from '@/services/api'
+import { spotsAPI, bookingsAPI, ratingsAPI } from '@/services/api'
+
+interface Rating {
+  id: string
+  rating: number
+  comment?: string
+  createdAt: string
+  user?: {
+    id: string
+    name: string
+  }
+}
 
 interface Spot {
   id: string
@@ -177,6 +287,9 @@ interface Spot {
   location: string
   price: number
   images?: string[]
+  averageRating?: number
+  totalRatings?: number
+  ratings?: Rating[]
   owner?: {
     name: string
   }
@@ -189,6 +302,9 @@ const authStore = useAuthStore()
 const spot = ref<Spot | null>(null)
 const loading = ref(false)
 const error = ref('')
+
+const ratings = ref<Rating[]>([])
+const ratingsLoading = ref(false)
 
 const bookingForm = reactive({
   dateFrom: '',
@@ -223,11 +339,36 @@ const fetchSpot = async () => {
   try {
     const response = await spotsAPI.getById(route.params.id as string)
     spot.value = response.data.spot
+    // Fetch ratings after spot is loaded
+    await fetchRatings()
   } catch (err: any) {
     error.value = err.response?.data?.error || 'Failed to fetch spot details'
   } finally {
     loading.value = false
   }
+}
+
+const fetchRatings = async () => {
+  if (!route.params.id) return
+  
+  ratingsLoading.value = true
+  try {
+    const response = await ratingsAPI.getSpotRatings(route.params.id as string)
+    ratings.value = response.data.ratings
+  } catch (err: any) {
+    console.error('Failed to fetch ratings:', err)
+    // Don't show error for ratings, just log it
+  } finally {
+    ratingsLoading.value = false
+  }
+}
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
 }
 
 const handleBooking = async () => {

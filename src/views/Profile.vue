@@ -186,16 +186,29 @@
                       </svg>
                       View
                     </button>
+                    
+                    <!-- Rate & Review button for past bookings -->
                     <button
+                      v-if="isPastBooking(booking.dateFrom)"
+                      @click.stop="openRatingModal(booking)"
+                      class="btn btn-sm btn-primary hover:bg-yellow-50 hover:text-yellow-600 hover:border-yellow-200"
+                    >
+                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                      </svg>
+                      Rate & Review
+                    </button>
+                    
+                    <!-- Cancel button for future bookings -->
+                    <button
+                      v-else
                       @click.stop="cancelBooking(booking.id)"
-                      :disabled="isPastBooking(booking.dateFrom)"
                       class="btn btn-sm btn-danger transition-all duration-200"
-                      :class="isPastBooking(booking.dateFrom) ? 'opacity-50 cursor-not-allowed' : ''"
                     >
                       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                       </svg>
-                      {{ isPastBooking(booking.dateFrom) ? 'Past' : 'Cancel' }}
+                      Cancel
                     </button>
                   </div>
                 </div>
@@ -224,6 +237,14 @@
         </div>
       </div>
     </div>
+    
+    <!-- Rating Modal -->
+    <RatingModal 
+      :show="showRatingModal"
+      :booking="selectedBooking"
+      @close="closeRatingModal"
+      @success="handleRatingSuccess"
+    />
   </div>
 </template>
 
@@ -232,6 +253,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { bookingsAPI } from '@/services/api'
+import RatingModal from '@/components/RatingModal.vue'
 
 interface Spot {
   id?: string
@@ -256,6 +278,8 @@ const loading = ref(false)
 const error = ref('')
 const showEditProfile = ref(false)
 const showChangePassword = ref(false)
+const showRatingModal = ref(false)
+const selectedBooking = ref<Booking | null>(null)
 
 const fetchBookings = async () => {
   loading.value = true
@@ -318,6 +342,21 @@ const getImageUrl = (imagePath: string) => {
   }
   // Otherwise, construct the full URL with the server base URL
   return `http://localhost:3001${imagePath}`
+}
+
+const openRatingModal = (booking: Booking) => {
+  selectedBooking.value = booking
+  showRatingModal.value = true
+}
+
+const closeRatingModal = () => {
+  showRatingModal.value = false
+  selectedBooking.value = null
+}
+
+const handleRatingSuccess = () => {
+  alert('Rating submitted successfully!')
+  closeRatingModal()
 }
 
 onMounted(() => {
