@@ -56,7 +56,19 @@
             </svg>
             Owner Dashboard
           </router-link>
-          <button @click="authStore.logout" class="btn btn-secondary">
+          <button @click="showEditProfile = true" class="btn btn-secondary">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            Edit Profile
+          </button>
+          <button @click="showChangePassword = true" class="btn btn-secondary">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-6 6c-3 0-5.5-1.5-5.5-4a3.5 3.5 0 117 0A6 6 0 0112 15a6 6 0 01-6-6 2 2 0 012-2m6 0V4a2 2 0 00-2-2 2 2 0 00-2 2v1a2 2 0 00-2 2"></path>
+            </svg>
+            Change Password
+          </button>
+          <button @click="authStore.logout" class="btn btn-danger">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
             </svg>
@@ -111,55 +123,82 @@
           <div 
             v-for="booking in bookings" 
             :key="booking.id"
-            class="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-all duration-200 bg-gradient-to-r from-white to-gray-50"
+            class="booking-card group cursor-pointer"
+            @click="viewSpotDetails(booking.spot?.id)"
           >
-            <div class="flex justify-between items-start">
-              <div class="flex-1">
-                <div class="flex items-start space-x-4">
-                  <div class="w-16 h-16 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
-                    </svg>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ booking.spot?.title }}</h3>
-                    <div class="flex items-center text-gray-600 mb-3">
-                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                      </svg>
-                      <span class="text-sm">{{ booking.spot?.location }}</span>
-                    </div>
-                    <div class="flex items-center text-gray-700 bg-gray-100 rounded-lg px-3 py-2 w-fit">
-                      <svg class="w-4 h-4 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                      </svg>
-                      <span class="font-medium">{{ formatDate(booking.dateFrom) }} - {{ formatDate(booking.dateTo) }}</span>
-                    </div>
-                  </div>
+            <div class="flex items-start space-x-4">
+              <!-- Spot Image -->
+              <div class="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 shadow-md group-hover:shadow-lg transition-all duration-300">
+                <img 
+                  v-if="booking.spot?.images && booking.spot?.images[0]"
+                  :src="getImageUrl(booking.spot.images[0])" 
+                  :alt="booking.spot?.title"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+                <div v-else class="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+                  </svg>
                 </div>
               </div>
               
-              <div class="text-right ml-4">
-                <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
-                  <div class="text-2xl font-bold text-green-700">
-                    €{{ calculateTotal(booking).toFixed(2) }}
+              <!-- Booking Details -->
+              <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-start">
+                  <div class="flex-1 min-w-0">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors duration-200 truncate">
+                      {{ booking.spot?.title }}
+                    </h3>
+                    <div class="flex items-center text-gray-600 mb-2">
+                      <svg class="w-4 h-4 mr-1.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      </svg>
+                      <span class="text-sm truncate">{{ booking.spot?.location }}</span>
+                    </div>
+                    <div class="flex items-center text-gray-700 bg-gray-100 rounded-lg px-3 py-2 w-fit mb-2">
+                      <svg class="w-4 h-4 mr-2 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                      <span class="font-medium text-sm">{{ formatDate(booking.dateFrom) }} - {{ formatDate(booking.dateTo) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div class="bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                        <div class="text-lg font-bold text-green-700">
+                          €{{ calculateTotal(booking).toFixed(2) }}
+                        </div>
+                        <div class="text-xs text-green-600">
+                          {{ calculateNights(booking) }} night{{ calculateNights(booking) > 1 ? 's' : '' }}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="text-sm text-green-600">
-                    {{ calculateNights(booking) }} night{{ calculateNights(booking) > 1 ? 's' : '' }}
+                  
+                  <!-- Action Buttons -->
+                  <div class="ml-4 flex flex-col space-y-2">
+                    <button
+                      @click.stop="viewSpotDetails(booking.spot?.id)"
+                      class="btn btn-sm btn-secondary hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200"
+                    >
+                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                      </svg>
+                      View
+                    </button>
+                    <button
+                      @click.stop="cancelBooking(booking.id)"
+                      :disabled="isPastBooking(booking.dateFrom)"
+                      class="btn btn-sm btn-danger transition-all duration-200"
+                      :class="isPastBooking(booking.dateFrom) ? 'opacity-50 cursor-not-allowed' : ''"
+                    >
+                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                      </svg>
+                      {{ isPastBooking(booking.dateFrom) ? 'Past' : 'Cancel' }}
+                    </button>
                   </div>
                 </div>
-                <button
-                  @click="cancelBooking(booking.id)"
-                  :disabled="isPastBooking(booking.dateFrom)"
-                  class="btn btn-sm btn-danger transition-all duration-200"
-                  :class="isPastBooking(booking.dateFrom) ? 'opacity-50 cursor-not-allowed' : 'hover-lift'"
-                >
-                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                  </svg>
-                  {{ isPastBooking(booking.dateFrom) ? 'Past Booking' : 'Cancel' }}
-                </button>
               </div>
             </div>
           </div>
@@ -190,13 +229,16 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { bookingsAPI } from '@/services/api'
 
 interface Spot {
+  id?: string
   title: string
   location: string
   price: number
+  images?: string[]
 }
 
 interface Booking {
@@ -207,10 +249,13 @@ interface Booking {
 }
 
 const authStore = useAuthStore()
+const router = useRouter()
 
 const bookings = ref<Booking[]>([])
 const loading = ref(false)
 const error = ref('')
+const showEditProfile = ref(false)
+const showChangePassword = ref(false)
 
 const fetchBookings = async () => {
   loading.value = true
@@ -260,7 +305,51 @@ const isPastBooking = (dateFrom: string) => {
   return new Date(dateFrom) < new Date()
 }
 
+const viewSpotDetails = (spotId?: string) => {
+  if (spotId) {
+    router.push(`/spots/${spotId}`)
+  }
+}
+
+const getImageUrl = (imagePath: string) => {
+  // If the path already starts with http, return as is
+  if (imagePath.startsWith('http')) {
+    return imagePath
+  }
+  // Otherwise, construct the full URL with the server base URL
+  return `http://localhost:3001${imagePath}`
+}
+
 onMounted(() => {
   fetchBookings()
 })
-</script> 
+</script>
+
+<style scoped>
+.booking-card {
+  @apply border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300 bg-gradient-to-r from-white to-gray-50 hover:from-blue-50 hover:to-white;
+}
+
+.booking-card:hover {
+  @apply border-blue-200 transform hover:scale-[1.02];
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hover-lift:hover {
+  @apply transform -translate-y-1;
+}
+</style> 
