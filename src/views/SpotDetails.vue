@@ -36,7 +36,7 @@
             </div>
           </div>
           <div class="text-right">
-            <div class="text-3xl font-bold text-primary-600">${{ spot.price }}</div>
+            <div class="text-3xl font-bold text-primary-600">€{{ spot.price }}</div>
             <div class="text-gray-600">per night</div>
           </div>
         </div>
@@ -140,7 +140,7 @@
               <div v-if="totalPrice > 0" class="border-t pt-4">
                 <div class="flex justify-between items-center">
                   <span>{{ nights }} night{{ nights > 1 ? 's' : '' }}</span>
-                  <span>${{ totalPrice }}</span>
+                  <span>€{{ totalPrice }}</span>
                 </div>
               </div>
               

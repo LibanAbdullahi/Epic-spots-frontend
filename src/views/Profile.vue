@@ -2,67 +2,108 @@
   <div class="min-h-screen bg-gray-50">
     <div class="max-w-4xl mx-auto px-4 py-8">
       <!-- Header -->
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
-        <p class="text-gray-600">Manage your account and view your bookings</p>
+      <div class="mb-8 animate-fade-in">
+        <h1 class="text-4xl font-bold text-gray-900 mb-2 text-shadow">My Profile</h1>
+        <p class="text-gray-600 text-lg">Manage your account and view your bookings</p>
       </div>
       
       <!-- User Info Card -->
-      <div class="card mb-8">
-        <h2 class="text-xl font-semibold mb-4">Account Information</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Name</label>
-            <p class="text-gray-900">{{ authStore.user?.name }}</p>
+      <div class="card mb-8 animate-slide-up">
+        <div class="flex items-center space-x-4 mb-6">
+          <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center">
+            <span class="text-white text-2xl font-bold">
+              {{ authStore.user?.name?.charAt(0).toUpperCase() }}
+            </span>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700">Email</label>
-            <p class="text-gray-900">{{ authStore.user?.email }}</p>
+            <h2 class="text-2xl font-semibold text-gray-900">Account Information</h2>
+            <p class="text-gray-600">Your personal details and account settings</p>
           </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Account Type</label>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  :class="authStore.user?.role === 'OWNER' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'">
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div class="bg-gray-50 rounded-lg p-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <p class="text-lg font-semibold text-gray-900">{{ authStore.user?.name }}</p>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <p class="text-lg font-semibold text-gray-900">{{ authStore.user?.email }}</p>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Account Type</label>
+            <span 
+              class="badge"
+              :class="authStore.user?.role === 'OWNER' ? 'badge-success' : 'badge-info'"
+            >
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path v-if="authStore.user?.role === 'OWNER'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
               {{ authStore.user?.role === 'OWNER' ? 'Spot Owner' : 'User' }}
             </span>
           </div>
         </div>
         
-        <div class="mt-6 flex space-x-4">
+        <div class="flex flex-wrap gap-3">
           <router-link 
             v-if="authStore.user?.role === 'OWNER'" 
             to="/owner/dashboard" 
             class="btn btn-primary"
           >
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
             Owner Dashboard
           </router-link>
           <button @click="authStore.logout" class="btn btn-secondary">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
             Sign Out
           </button>
         </div>
       </div>
       
       <!-- Bookings Section -->
-      <div class="card">
+      <div class="card animate-slide-up">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-semibold">My Bookings</h2>
-          <button @click="fetchBookings" class="text-primary-600 hover:text-primary-800">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div>
+            <h2 class="text-2xl font-semibold text-gray-900">My Bookings</h2>
+            <p class="text-gray-600">Track and manage your camping reservations</p>
+          </div>
+          <button 
+            @click="fetchBookings" 
+            class="btn btn-sm btn-secondary hover-lift"
+            title="Refresh bookings"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
             </svg>
+            Refresh
           </button>
         </div>
         
         <!-- Loading State -->
-        <div v-if="loading" class="text-center py-8">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto"></div>
-          <p class="mt-2 text-gray-600">Loading bookings...</p>
+        <div v-if="loading" class="text-center py-12">
+          <div class="animate-spin rounded-full h-12 w-12 border-4 border-primary-600 border-t-transparent mx-auto"></div>
+          <p class="mt-4 text-gray-600 font-medium">Loading your bookings...</p>
         </div>
         
         <!-- Error State -->
-        <div v-else-if="error" class="text-center py-8">
-          <p class="text-red-600 mb-4">{{ error }}</p>
-          <button @click="fetchBookings" class="btn btn-primary">Try Again</button>
+        <div v-else-if="error" class="text-center py-12">
+          <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-4">
+            <svg class="w-8 h-8 text-red-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="text-red-700 font-medium">{{ error }}</p>
+          </div>
+          <button @click="fetchBookings" class="btn btn-primary">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            Try Again
+          </button>
         </div>
         
         <!-- Bookings List -->
@@ -70,33 +111,54 @@
           <div 
             v-for="booking in bookings" 
             :key="booking.id"
-            class="border rounded-lg p-4 hover:bg-gray-50"
+            class="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-all duration-200 bg-gradient-to-r from-white to-gray-50"
           >
             <div class="flex justify-between items-start">
               <div class="flex-1">
-                <h3 class="font-semibold text-gray-900">{{ booking.spot?.title }}</h3>
-                <p class="text-gray-600 text-sm mb-2">{{ booking.spot?.location }}</p>
-                <div class="flex items-center text-sm text-gray-600">
-                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                  </svg>
-                  <span>{{ formatDate(booking.dateFrom) }} - {{ formatDate(booking.dateTo) }}</span>
+                <div class="flex items-start space-x-4">
+                  <div class="w-16 h-16 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+                    </svg>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ booking.spot?.title }}</h3>
+                    <div class="flex items-center text-gray-600 mb-3">
+                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      </svg>
+                      <span class="text-sm">{{ booking.spot?.location }}</span>
+                    </div>
+                    <div class="flex items-center text-gray-700 bg-gray-100 rounded-lg px-3 py-2 w-fit">
+                      <svg class="w-4 h-4 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                      <span class="font-medium">{{ formatDate(booking.dateFrom) }} - {{ formatDate(booking.dateTo) }}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
               
-              <div class="text-right">
-                <div class="font-semibold text-primary-600">
-                  ${{ calculateTotal(booking) }}
-                </div>
-                <div class="text-sm text-gray-600">
-                  {{ calculateNights(booking) }} night{{ calculateNights(booking) > 1 ? 's' : '' }}
+              <div class="text-right ml-4">
+                <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
+                  <div class="text-2xl font-bold text-green-700">
+                    €{{ calculateTotal(booking) }}
+                  </div>
+                  <div class="text-sm text-green-600">
+                    {{ calculateNights(booking) }} night{{ calculateNights(booking) > 1 ? 's' : '' }}
+                  </div>
                 </div>
                 <button
                   @click="cancelBooking(booking.id)"
                   :disabled="isPastBooking(booking.dateFrom)"
-                  class="text-red-600 hover:text-red-800 text-sm mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="btn btn-sm btn-danger transition-all duration-200"
+                  :class="isPastBooking(booking.dateFrom) ? 'opacity-50 cursor-not-allowed' : 'hover-lift'"
                 >
-                  Cancel
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                  {{ isPastBooking(booking.dateFrom) ? 'Past Booking' : 'Cancel' }}
                 </button>
               </div>
             </div>
@@ -104,15 +166,22 @@
         </div>
         
         <!-- Empty State -->
-        <div v-else class="text-center py-12">
-          <div class="text-gray-400 mb-4">
-            <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-            </svg>
+        <div v-else class="text-center py-16">
+          <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 max-w-md mx-auto">
+            <div class="text-gray-400 mb-6">
+              <svg class="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">No bookings yet</h3>
+            <p class="text-gray-600 mb-6">Start exploring amazing camping spots and create your first booking!</p>
+            <router-link to="/" class="btn btn-primary">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+              Browse Spots
+            </router-link>
           </div>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">No bookings yet</h3>
-          <p class="text-gray-600 mb-4">Start exploring amazing camping spots!</p>
-          <router-link to="/" class="btn btn-primary">Browse Spots</router-link>
         </div>
       </div>
     </div>
@@ -124,9 +193,22 @@ import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { bookingsAPI } from '@/services/api'
 
+interface Spot {
+  title: string
+  location: string
+  price: number
+}
+
+interface Booking {
+  id: number
+  dateFrom: string
+  dateTo: string
+  spot?: Spot
+}
+
 const authStore = useAuthStore()
 
-const bookings = ref([])
+const bookings = ref<Booking[]>([])
 const loading = ref(false)
 const error = ref('')
 
@@ -148,24 +230,28 @@ const cancelBooking = async (bookingId: number) => {
   if (!confirm('Are you sure you want to cancel this booking?')) return
   
   try {
-    await bookingsAPI.delete(bookingId)
-    bookings.value = bookings.value.filter((b: any) => b.id !== bookingId)
+    await bookingsAPI.cancel(bookingId.toString())
+    bookings.value = bookings.value.filter((b: Booking) => b.id !== bookingId)
   } catch (err: any) {
     alert(err.response?.data?.error || 'Failed to cancel booking')
   }
 }
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString()
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
 }
 
-const calculateNights = (booking: any) => {
+const calculateNights = (booking: Booking) => {
   const start = new Date(booking.dateFrom)
   const end = new Date(booking.dateTo)
   return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
 }
 
-const calculateTotal = (booking: any) => {
+const calculateTotal = (booking: Booking) => {
   const nights = calculateNights(booking)
   return nights * (booking.spot?.price || 0)
 }

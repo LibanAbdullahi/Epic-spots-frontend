@@ -18,7 +18,7 @@
           <div class="text-gray-600">Total Bookings</div>
         </div>
         <div class="card text-center">
-          <div class="text-3xl font-bold text-green-600 mb-2">${{ totalRevenue }}</div>
+          <div class="text-3xl font-bold text-green-600 mb-2">€{{ totalRevenue }}</div>
           <div class="text-gray-600">Total Revenue</div>
         </div>
       </div>
@@ -90,7 +90,7 @@
             <h3 class="font-semibold text-gray-900 mb-2">{{ spot.title }}</h3>
             <p class="text-gray-600 text-sm mb-2">{{ spot.location }}</p>
             <div class="flex justify-between items-center mb-4">
-              <span class="text-lg font-bold text-primary-600">${{ spot.price }}/night</span>
+              <span class="text-lg font-bold text-primary-600">€{{ spot.price }}/night</span>
               <span class="text-sm text-gray-500">{{ getSpotBookingsCount(spot.id) }} bookings</span>
             </div>
             <div class="flex space-x-2">
@@ -149,7 +149,7 @@
               </div>
               <div class="text-right">
                 <div class="font-semibold text-green-600">
-                  ${{ calculateBookingTotal(booking) }}
+                  €{{ calculateBookingTotal(booking) }}
                 </div>
                 <div class="text-sm text-gray-600">
                   {{ calculateBookingNights(booking) }} night(s)

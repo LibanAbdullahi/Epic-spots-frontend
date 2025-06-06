@@ -46,7 +46,7 @@
         
         <div>
           <label for="price" class="block text-sm font-medium text-gray-700 mb-2">
-            Price per night ($) *
+            Price per night (€) *
           </label>
           <input
             id="price"

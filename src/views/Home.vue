@@ -1,63 +1,187 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Hero Section -->
-    <div class="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div class="text-center">
-          <h1 class="text-4xl md:text-6xl font-bold mb-6">
-            Discover Belgian Camping Gems
+    <div class="relative gradient-bg text-white overflow-hidden">
+      <!-- Background pattern -->
+      <div class="absolute inset-0 opacity-10">
+        <svg class="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="hero-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M20 20m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" stroke="currentColor" stroke-width="0.5" fill="none"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#hero-pattern)" />
+        </svg>
+      </div>
+      
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+        <div class="text-center animate-fade-in">
+          <div class="mb-8">
+            <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-medium mb-6">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              Discover Belgium's Hidden Gems
+            </span>
+          </div>
+          
+          <h1 class="text-5xl md:text-7xl font-bold mb-8 text-shadow leading-tight">
+            Epic Camping
+            <span class="block bg-gradient-to-r from-accent-300 to-accent-100 bg-clip-text text-transparent">
+              Adventures
+            </span>
           </h1>
-          <p class="text-xl md:text-2xl mb-8 text-primary-100">
-            From the Ardennes forests to the North Sea coast - find your perfect Belgian camping adventure
+          
+          <p class="text-xl md:text-2xl mb-12 text-white/90 max-w-3xl mx-auto leading-relaxed">
+            From the mystical Ardennes forests to the pristine North Sea coast - embark on your perfect Belgian camping journey
           </p>
-          <div class="max-w-md mx-auto">
-            <div class="flex">
-              <input
-                v-model="searchQuery"
-                type="text"
-                placeholder="Search locations..."
-                class="flex-1 px-4 py-3 rounded-l-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-300"
-              />
-              <button
-                @click="searchSpots"
-                class="px-6 py-3 bg-accent-600 hover:bg-accent-700 rounded-r-lg font-medium transition-colors"
-              >
-                Search
-              </button>
+          
+          <!-- Enhanced Search Bar -->
+          <div class="max-w-2xl mx-auto mb-8">
+            <div class="relative">
+              <div class="glass-effect rounded-2xl p-2 shadow-2xl">
+                <div class="flex items-center">
+                  <div class="flex-1 relative">
+                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input
+                      v-model="searchQuery"
+                      type="text"
+                      placeholder="Search by location, name, or description..."
+                      class="w-full pl-12 pr-4 py-4 bg-white rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-accent-300 border-0 text-lg placeholder-gray-500"
+                      @keypress.enter="searchSpots"
+                    />
+                  </div>
+                  <button
+                    @click="searchSpots"
+                    class="ml-2 px-8 py-4 bg-gradient-to-r from-accent-600 to-accent-700 hover:from-accent-700 hover:to-accent-800 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Hero Stats -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div class="glass-effect rounded-xl p-6 text-center">
+              <div class="text-3xl font-bold mb-2">{{ spots.length }}+</div>
+              <div class="text-white/80">Amazing Spots</div>
+            </div>
+            <div class="glass-effect rounded-xl p-6 text-center">
+              <div class="text-3xl font-bold mb-2">100%</div>
+              <div class="text-white/80">Verified Hosts</div>
+            </div>
+            <div class="glass-effect rounded-xl p-6 text-center">
+              <div class="text-3xl font-bold mb-2">24/7</div>
+              <div class="text-white/80">Support</div>
             </div>
           </div>
         </div>
       </div>
+      
+      <!-- Decorative elements -->
+      <div class="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+      <div class="absolute bottom-10 right-10 w-32 h-32 bg-accent-300/20 rounded-full blur-2xl"></div>
     </div>
 
     <!-- Spots Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="flex justify-between items-center mb-8">
-        <h2 class="text-3xl font-bold text-gray-900">Available Spots</h2>
-        <div v-if="authStore.isOwner" class="flex space-x-4">
-          <button
-            @click="showCreateSpot = true"
-            class="btn btn-primary"
-          >
-            Add New Spot
-          </button>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <!-- Section Header -->
+      <div class="text-center mb-12 animate-slide-up">
+        <h2 class="text-4xl font-bold text-gray-900 mb-4">
+          {{ searchQuery ? 'Search Results' : 'Featured Camping Spots' }}
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          {{ searchQuery 
+            ? `Found ${filteredSpots.length} spot${filteredSpots.length !== 1 ? 's' : ''} matching "${searchQuery}"`
+            : 'Discover handpicked camping locations across Belgium, each offering unique experiences and breathtaking nature'
+          }}
+        </p>
+        
+        <div class="flex justify-center items-center mt-8 space-x-4">
+          <div v-if="authStore.isOwner" class="flex space-x-4">
+            <button
+              @click="showCreateSpot = true"
+              class="btn btn-primary"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Add New Spot
+            </button>
+          </div>
+          
+          <!-- Filter buttons -->
+          <div class="flex items-center space-x-2">
+            <button 
+              @click="searchQuery = ''"
+              :class="[
+                'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
+                !searchQuery ? 'bg-primary-100 text-primary-700' : 'text-gray-600 hover:bg-gray-100'
+              ]"
+            >
+              All Spots
+            </button>
+            <button 
+              @click="searchQuery = 'Ardennes'"
+              :class="[
+                'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
+                searchQuery === 'Ardennes' ? 'bg-primary-100 text-primary-700' : 'text-gray-600 hover:bg-gray-100'
+              ]"
+            >
+              Ardennes
+            </button>
+            <button 
+              @click="searchQuery = 'Coast'"
+              :class="[
+                'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
+                searchQuery === 'Coast' ? 'bg-primary-100 text-primary-700' : 'text-gray-600 hover:bg-gray-100'
+              ]"
+            >
+              Coast
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="text-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-        <p class="mt-4 text-gray-600">Loading spots...</p>
+      <div v-if="loading" class="text-center py-16">
+        <div class="relative">
+          <div class="animate-spin rounded-full h-16 w-16 border-4 border-primary-600 border-t-transparent mx-auto"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+            </svg>
+          </div>
+        </div>
+        <p class="mt-6 text-gray-600 font-medium text-lg">Discovering amazing camping spots...</p>
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="text-center py-12">
-        <p class="text-red-600 mb-4">{{ error }}</p>
-        <button @click="fetchSpots" class="btn btn-primary">Try Again</button>
+      <div v-else-if="error" class="text-center py-16">
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-8 max-w-md mx-auto">
+          <svg class="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h3 class="text-lg font-semibold text-red-800 mb-2">Oops! Something went wrong</h3>
+          <p class="text-red-600 mb-4">{{ error }}</p>
+          <button @click="fetchSpots" class="btn btn-primary">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            Try Again
+          </button>
+        </div>
       </div>
 
       <!-- Spots Grid -->
-      <div v-else-if="filteredSpots.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-else-if="filteredSpots.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-fade-in">
         <CampingCard
           v-for="spot in filteredSpots"
           :key="spot.id"
@@ -69,14 +193,37 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="text-center py-12">
-        <div class="text-gray-400 mb-4">
-          <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-          </svg>
+      <div v-else class="text-center py-20">
+        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-12 max-w-lg mx-auto">
+          <div class="text-gray-400 mb-6">
+            <svg class="mx-auto h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+          <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+            {{ searchQuery ? 'No spots found' : 'No camping spots available' }}
+          </h3>
+          <p class="text-gray-600 mb-8">
+            {{ searchQuery 
+              ? 'Try adjusting your search terms or browse all spots' 
+              : 'Be the first to add an amazing camping spot!'
+            }}
+          </p>
+          <div class="space-y-3">
+            <button v-if="searchQuery" @click="searchQuery = ''" class="btn btn-secondary mr-3">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              Clear Search
+            </button>
+            <button v-if="authStore.isOwner" @click="showCreateSpot = true" class="btn btn-primary">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Add Your Spot
+            </button>
+          </div>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">No camping spots found</h3>
-        <p class="text-gray-600">Try adjusting your search criteria or check back later.</p>
       </div>
     </div>
 
