@@ -140,7 +140,7 @@
               <div v-if="totalPrice > 0" class="border-t pt-4">
                 <div class="flex justify-between items-center">
                   <span>{{ nights }} night{{ nights > 1 ? 's' : '' }}</span>
-                  <span>€{{ totalPrice }}</span>
+                  <span>€{{ totalPrice.toFixed(2) }}</span>
                 </div>
               </div>
               

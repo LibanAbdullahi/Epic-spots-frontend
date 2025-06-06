@@ -143,7 +143,7 @@
               <div class="text-right ml-4">
                 <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
                   <div class="text-2xl font-bold text-green-700">
-                    €{{ calculateTotal(booking) }}
+                    €{{ calculateTotal(booking).toFixed(2) }}
                   </div>
                   <div class="text-sm text-green-600">
                     {{ calculateNights(booking) }} night{{ calculateNights(booking) > 1 ? 's' : '' }}

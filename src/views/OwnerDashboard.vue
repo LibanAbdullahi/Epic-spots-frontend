@@ -18,7 +18,7 @@
           <div class="text-gray-600">Total Bookings</div>
         </div>
         <div class="card text-center">
-          <div class="text-3xl font-bold text-green-600 mb-2">€{{ totalRevenue }}</div>
+          <div class="text-3xl font-bold text-green-600 mb-2">€{{ totalRevenue.toFixed(2) }}</div>
           <div class="text-gray-600">Total Revenue</div>
         </div>
       </div>
@@ -156,7 +156,7 @@
               </div>
               <div class="text-right">
                 <div class="font-semibold text-green-600">
-                  €{{ calculateBookingTotal(booking) }}
+                  €{{ calculateBookingTotal(booking).toFixed(2) }}
                 </div>
                 <div class="text-sm text-gray-600">
                   {{ calculateBookingNights(booking) }} night(s)
@@ -239,15 +239,16 @@ const mySpots = ref<Spot[]>([])
 const spotBookings = ref<Booking[]>([])
 const spotsLoading = ref(false)
 const bookingsLoading = ref(false)
+const dashboardStats = ref({
+  totalSpots: 0,
+  totalBookings: 0,
+  upcomingBookings: 0,
+  totalRevenue: 0
+})
 
 // Computed
-const totalBookings = computed(() => spotBookings.value?.length || 0)
-const totalRevenue = computed(() => {
-  if (!spotBookings.value) return 0
-  return spotBookings.value.reduce((sum: number, booking: Booking) => {
-    return sum + calculateBookingTotal(booking)
-  }, 0)
-})
+const totalBookings = computed(() => dashboardStats.value.totalBookings)
+const totalRevenue = computed(() => dashboardStats.value.totalRevenue)
 
 const getSpotBookingsCount = (spotId: string) => {
   if (!spotBookings.value) return 0
@@ -271,7 +272,26 @@ const fetchSpotBookings = async () => {
   bookingsLoading.value = true
   try {
     const response = await usersAPI.getOwnerDashboard()
-    spotBookings.value = response.data.bookings
+    
+    // Extract all bookings from all spots and flatten them
+    const allBookings = response.data.spots.flatMap((spot: any) => 
+      spot.bookings.map((booking: any) => ({
+        ...booking,
+        spot: {
+          title: spot.title,
+          price: spot.price
+        }
+      }))
+    )
+    spotBookings.value = allBookings
+    
+    // Update dashboard statistics from backend
+    if (response.data.statistics) {
+      dashboardStats.value = response.data.statistics
+    }
+    
+    console.log('Fetched bookings:', allBookings)
+    console.log('Dashboard stats:', response.data.statistics)
   } catch (error) {
     console.error('Failed to fetch bookings:', error)
   } finally {
@@ -282,6 +302,7 @@ const fetchSpotBookings = async () => {
 const handleSpotCreated = () => {
   showCreateSpot.value = false
   fetchMySpots()
+  fetchSpotBookings() // Refresh stats as well
 }
 
 const editSpot = (spot: Spot) => {
@@ -301,9 +322,15 @@ const deleteSpot = async (spotId: string) => {
   try {
     await spotsAPI.delete(spotId)
     mySpots.value = mySpots.value.filter((s: Spot) => s.id !== spotId)
+    fetchSpotBookings() // Refresh stats after deletion
   } catch (error: any) {
     alert(error.response?.data?.error || 'Failed to delete spot')
   }
+}
+
+const refreshDashboard = () => {
+  fetchMySpots()
+  fetchSpotBookings()
 }
 
 const formatDate = (dateString: string) => {
