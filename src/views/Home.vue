@@ -104,26 +104,15 @@
           }}
         </p>
         
-        <div class="flex justify-center items-center mt-8 space-x-4">
-          <div v-if="authStore.isOwner" class="flex space-x-4">
-            <button
-              @click="showCreateSpot = true"
-              class="btn btn-primary"
-            >
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-              </svg>
-              Add New Spot
-            </button>
-          </div>
-          
+        <!-- Filter and Actions Section -->
+        <div class="flex flex-col md:flex-row justify-center items-center mt-8 space-y-4 md:space-y-0 md:space-x-6">
           <!-- Filter buttons -->
-          <div class="flex items-center space-x-2">
+          <div class="flex items-center space-x-1 bg-white rounded-xl p-1 shadow-sm border border-gray-200">
             <button 
               @click="searchQuery = ''"
               :class="[
-                'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-                !searchQuery ? 'bg-primary-100 text-primary-700' : 'text-gray-600 hover:bg-gray-100'
+                'px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200',
+                !searchQuery ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               ]"
             >
               All Spots
@@ -131,8 +120,8 @@
             <button 
               @click="searchQuery = 'Ardennes'"
               :class="[
-                'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-                searchQuery === 'Ardennes' ? 'bg-primary-100 text-primary-700' : 'text-gray-600 hover:bg-gray-100'
+                'px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200',
+                searchQuery === 'Ardennes' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               ]"
             >
               Ardennes
@@ -140,11 +129,26 @@
             <button 
               @click="searchQuery = 'Coast'"
               :class="[
-                'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-                searchQuery === 'Coast' ? 'bg-primary-100 text-primary-700' : 'text-gray-600 hover:bg-gray-100'
+                'px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200',
+                searchQuery === 'Coast' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               ]"
             >
               Coast
+            </button>
+          </div>
+          
+          <!-- Add Spot Button for owners -->
+          <div v-if="authStore.isOwner">
+            <button
+              @click="showCreateSpot = true"
+              class="inline-flex items-center px-4 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 transition-all duration-200 shadow-sm hover:shadow-md group"
+            >
+              <div class="w-5 h-5 mr-2 bg-slate-100 rounded-lg flex items-center justify-center group-hover:bg-slate-200 transition-colors duration-200">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+              </div>
+              Add Spot
             </button>
           </div>
         </div>
@@ -216,10 +220,12 @@
               </svg>
               Clear Search
             </button>
-            <button v-if="authStore.isOwner" @click="showCreateSpot = true" class="btn btn-primary">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-              </svg>
+            <button v-if="authStore.isOwner" @click="showCreateSpot = true" class="inline-flex items-center px-6 py-3 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+              <div class="w-5 h-5 mr-2 bg-white/20 rounded-lg flex items-center justify-center">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+              </div>
               Add Your Spot
             </button>
           </div>

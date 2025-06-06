@@ -119,7 +119,14 @@
           </div>
           <h3 class="text-lg font-medium text-gray-900 mb-2">No spots yet</h3>
           <p class="text-gray-600 mb-4">Create your first camping spot to get started!</p>
-          <button @click="showCreateSpot = true" class="btn btn-primary">Add New Spot</button>
+          <button @click="showCreateSpot = true" class="inline-flex items-center px-6 py-3 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+            <div class="w-5 h-5 mr-2 bg-white/20 rounded-lg flex items-center justify-center">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+            </div>
+            Add New Spot
+          </button>
         </div>
       </div>
       
