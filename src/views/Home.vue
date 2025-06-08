@@ -19,10 +19,9 @@
           <div class="mb-8">
             <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-medium mb-6">
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
-              Discover Belgium's Hidden Gems
+              Explore the World's Best Camping
             </span>
           </div>
           
@@ -34,7 +33,7 @@
           </h1>
           
           <p class="text-xl md:text-2xl mb-12 text-white/90 max-w-3xl mx-auto leading-relaxed">
-            From the mystical Ardennes forests to the pristine North Sea coast - embark on your perfect Belgian camping journey
+            From pristine mountain peaks to serene lakeshores and enchanting forests - discover extraordinary camping experiences around the world
           </p>
           
           <!-- Enhanced Search Bar -->
@@ -71,7 +70,7 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <div class="glass-effect rounded-xl p-6 text-center">
               <div class="text-3xl font-bold mb-2">{{ spots.length }}+</div>
-              <div class="text-white/80">Amazing Spots</div>
+              <div class="text-white/80">Global Destinations</div>
             </div>
             <div class="glass-effect rounded-xl p-6 text-center">
               <div class="text-3xl font-bold mb-2">100%</div>
@@ -100,7 +99,7 @@
         <p class="text-xl text-gray-600 max-w-3xl mx-auto">
           {{ searchQuery 
             ? `Found ${filteredSpots.length} spot${filteredSpots.length !== 1 ? 's' : ''} matching "${searchQuery}"`
-            : 'Discover handpicked camping locations across Belgium, each offering unique experiences and breathtaking nature'
+            : 'Discover extraordinary camping destinations worldwide, each offering unique experiences and breathtaking natural beauty'
           }}
         </p>
         
@@ -118,22 +117,31 @@
               All Spots
             </button>
             <button 
-              @click="searchQuery = 'Ardennes'"
+              @click="searchQuery = 'Mountain'"
               :class="[
                 'px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200',
-                searchQuery === 'Ardennes' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                searchQuery === 'Mountain' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               ]"
             >
-              Ardennes
+              Mountains
             </button>
             <button 
-              @click="searchQuery = 'Coast'"
+              @click="searchQuery = 'Lake'"
               :class="[
                 'px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200',
-                searchQuery === 'Coast' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                searchQuery === 'Lake' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               ]"
             >
-              Coast
+              Lakes
+            </button>
+            <button 
+              @click="searchQuery = 'Forest'"
+              :class="[
+                'px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200',
+                searchQuery === 'Forest' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              ]"
+            >
+              Forests
             </button>
           </div>
           
@@ -164,7 +172,7 @@
             </svg>
           </div>
         </div>
-        <p class="mt-6 text-gray-600 font-medium text-lg">Discovering amazing camping spots...</p>
+        <p class="mt-6 text-gray-600 font-medium text-lg">Discovering extraordinary destinations worldwide...</p>
       </div>
 
       <!-- Error State -->
@@ -228,6 +236,53 @@
               </div>
               Add Your Spot
             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="bg-white py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-bold text-gray-900 mb-4">Why Choose Epic Spots?</h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+            Join thousands of adventurers discovering unique camping experiences across the globe
+          </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Global Reach -->
+          <div class="text-center group">
+            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">Worldwide Destinations</h3>
+            <p class="text-gray-600">From remote mountain peaks to tropical beaches, discover camping spots in every corner of the world</p>
+          </div>
+          
+          <!-- Verified Quality -->
+          <div class="text-center group">
+            <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">Verified Quality</h3>
+            <p class="text-gray-600">Every spot is carefully vetted and reviewed by our community to ensure exceptional experiences</p>
+          </div>
+          
+          <!-- Easy Booking -->
+          <div class="text-center group">
+            <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">Instant Booking</h3>
+            <p class="text-gray-600">Book your perfect camping spot in seconds with our streamlined, secure booking process</p>
           </div>
         </div>
       </div>
