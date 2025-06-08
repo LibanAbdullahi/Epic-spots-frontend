@@ -19,29 +19,37 @@
     "dev:clean": "npm run clean && npm run dev"
   },
   "dependencies": {
-    "vue": "^3.3.8",
-    "vue-router": "^4.2.5",
+    "@types/leaflet": "^1.9.18",
     "axios": "^1.6.0",
-    "pinia": "^2.1.7"
+    "leaflet": "^1.9.4",
+    "pinia": "^2.1.7",
+    "vue": "^3.3.8",
+    "vue-leaflet": "^0.1.0",
+    "vue-router": "^4.2.5"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.5.0",
-    "vite": "^5.0.0",
-    "vue-tsc": "^1.8.25",
-    "typescript": "^5.2.2",
-    "@vue/eslint-config-typescript": "^12.0.0",
-    "@vue/eslint-config-prettier": "^8.0.0",
     "@rushstack/eslint-patch": "^1.3.3",
+    "@types/node": "^20.9.0",
+    "@vitejs/plugin-vue": "^4.5.0",
+    "@vue/eslint-config-prettier": "^8.0.0",
+    "@vue/eslint-config-typescript": "^12.0.0",
+    "autoprefixer": "^10.4.16",
     "eslint": "^8.49.0",
-    "eslint-plugin-vue": "^9.17.0",
     "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-vue": "^9.17.0",
+    "postcss": "^8.4.32",
     "prettier": "^3.0.3",
     "tailwindcss": "^3.3.6",
-    "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.32",
-    "@types/node": "^20.9.0"
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0",
+    "vue-tsc": "^1.8.25"
   },
-  "keywords": ["vue", "camping", "booking", "frontend"],
+  "keywords": [
+    "vue",
+    "camping",
+    "booking",
+    "frontend"
+  ],
   "author": "Epic Spots Team",
   "license": "MIT"
-} 
+}

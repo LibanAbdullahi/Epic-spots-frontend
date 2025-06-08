@@ -192,6 +192,39 @@
         </div>
       </div>
 
+      <!-- Map and Spots Toggle -->
+      <div v-if="filteredSpots.length > 0" class="mb-8">
+        <div class="flex justify-center space-x-1 bg-white rounded-xl p-1 shadow-sm border border-gray-200 max-w-xs mx-auto">
+          <button 
+            @click="viewMode = 'grid'"
+            :class="[
+              'px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200',
+              viewMode === 'grid' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+            ]"
+          >
+            Grid View
+          </button>
+          <button 
+            @click="viewMode = 'map'"
+            :class="[
+              'px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200',
+              viewMode === 'map' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+            ]"
+          >
+            Map View
+          </button>
+        </div>
+      </div>
+
+      <!-- Map View -->
+      <div v-if="filteredSpots.length > 0 && viewMode === 'map'" class="animate-fade-in">
+        <MapComponent 
+          :spots="filteredSpots" 
+          height="600px"
+          @spot-click="handleMapSpotClick"
+        />
+      </div>
+
       <!-- Spots Grid -->
       <div v-else-if="filteredSpots.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-fade-in">
         <CampingCard
@@ -307,25 +340,16 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { spotsAPI } from '@/services/api'
 import CampingCard from '@/components/CampingCard.vue'
 import CreateSpotModal from '@/components/CreateSpotModal.vue'
 import EditSpotModal from '@/components/EditSpotModal.vue'
+import MapComponent from '@/components/MapComponent.vue'
+import type { Spot } from '@/types'
 
-interface Spot {
-  id: string
-  title: string
-  description: string
-  location: string
-  price: number
-  images?: string[]
-  owner?: {
-    id?: string
-    name: string
-  }
-}
-
+const router = useRouter()
 const authStore = useAuthStore()
 
 // State
@@ -333,6 +357,7 @@ const spots = ref<Spot[]>([])
 const loading = ref(false)
 const error = ref('')
 const searchQuery = ref('')
+const viewMode = ref<'grid' | 'map'>('grid')
 const showCreateSpot = ref(false)
 const showEditSpot = ref(false)
 const editingSpot = ref<Spot | null>(null)
@@ -395,6 +420,10 @@ const handleDeleteSpot = async (spotId: string) => {
   } catch (err: any) {
     alert(err.response?.data?.error || 'Failed to delete spot')
   }
+}
+
+const handleMapSpotClick = (spot: Spot) => {
+  router.push(`/spots/${spot.id}`)
 }
 
 // Initialize
