@@ -31,9 +31,11 @@ Epic Spots is a camping booking platform built with Vue 3, TypeScript, and Tailw
 - **State Management**: Pinia
 - **Routing**: Vue Router
 - **HTTP Client**: Axios
-- **Maps**: Leaflet with Vue3-Leaflet
+- **Maps**: Leaflet with vue-leaflet
 - **Build Tool**: Vite
-- **Testing**: Playwright (E2E), Vitest (Unit)
+- **Testing**: Playwright (E2E)
+- **Linting**: ESLint + Prettier
+- **Dev Tools**: Vue TSC, tsx
 
 ## 📋 Prerequisites
 
@@ -76,15 +78,22 @@ Epic Spots is a camping booking platform built with Vue 3, TypeScript, and Tailw
 ## 📝 Available Scripts
 
 - `npm run dev` - Start development server
-- `npm run build` - Build for production
+- `npm run build` - Build for production (includes type checking)
 - `npm run preview` - Preview production build locally
 - `npm run type-check` - Run TypeScript type checking
-- `npm run lint` - Run ESLint
+- `npm run type-check:watch` - Run TypeScript type checking in watch mode
+- `npm run lint` - Run ESLint with auto-fix
+- `npm run lint:check` - Run ESLint without auto-fix
 - `npm run lint:fix` - Fix ESLint issues automatically
 - `npm run format` - Format code with Prettier
-- `npm test` - Run unit tests
+- `npm run format:check` - Check code formatting with Prettier
+- `npm run clean` - Clean dist and cache directories
+- `npm run dev:clean` - Clean and start development server
+- `npm run prebuild` - Pre-build checks (lint and format)
 - `npm run test:e2e` - Run end-to-end tests
+- `npm run test:e2e:ui` - Run E2E tests with Playwright UI
 - `npm run test:e2e:headed` - Run E2E tests with browser UI
+- `npm run test:e2e:debug` - Run E2E tests in debug mode
 
 ## 🧪 Testing
 
@@ -100,6 +109,12 @@ npx playwright test e2e/auth.spec.ts
 
 # Run tests with browser UI
 npm run test:e2e:headed
+
+# Run tests with Playwright UI
+npm run test:e2e:ui
+
+# Debug tests
+npm run test:e2e:debug
 
 # Open Playwright test report
 npx playwright show-report
