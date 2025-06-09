@@ -103,7 +103,7 @@
               <button 
                 @click="deleteSpot(spot.id)" 
                 class="flex-1 text-sm px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-md"
-              >
+              data-testid="delete-spot-button">
                 Delete
               </button>
             </div>
@@ -193,6 +193,26 @@
       @close="showEditSpot = false"
       @updated="handleSpotUpdated"
     />
+    
+    <!-- Delete Confirmation Modal -->
+    <ConfirmationModal
+      :show="showDeleteConfirm"
+      title="Delete Camping Spot"
+      message="Are you sure you want to delete this spot? This action cannot be undone."
+      confirm-text="Delete"
+      cancel-text="Cancel"
+      @confirm="confirmDeleteSpot"
+      @cancel="cancelDeleteSpot"
+    />
+    
+    <!-- Notification Toast -->
+    <NotificationToast
+      :show="showNotification"
+      :type="notification.type"
+      :title="notification.title"
+      :message="notification.message"
+      @close="closeNotification"
+    />
   </div>
 </template>
 
@@ -201,6 +221,8 @@ import { ref, computed, onMounted } from 'vue'
 import { spotsAPI, usersAPI } from '@/services/api'
 import CreateSpotModal from '@/components/CreateSpotModal.vue'
 import EditSpotModal from '@/components/EditSpotModal.vue'
+import ConfirmationModal from '@/components/ConfirmationModal.vue'
+import NotificationToast from '@/components/NotificationToast.vue'
 
 interface Spot {
   id: string
@@ -233,6 +255,16 @@ const activeTab = ref('spots')
 const showCreateSpot = ref(false)
 const showEditSpot = ref(false)
 const editingSpot = ref<Spot | null>(null)
+
+// Modal and notification states
+const showDeleteConfirm = ref(false)
+const spotToDelete = ref<string | null>(null)
+const showNotification = ref(false)
+const notification = ref({
+  type: 'info' as 'success' | 'error' | 'info',
+  title: '',
+  message: ''
+})
 
 // Data
 const mySpots = ref<Spot[]>([])
@@ -316,16 +348,47 @@ const handleSpotUpdated = () => {
   fetchMySpots()
 }
 
-const deleteSpot = async (spotId: string) => {
-  if (!confirm('Are you sure you want to delete this spot?')) return
+const deleteSpot = (spotId: string) => {
+  spotToDelete.value = spotId
+  showDeleteConfirm.value = true
+}
+
+const confirmDeleteSpot = async () => {
+  if (!spotToDelete.value) return
   
   try {
-    await spotsAPI.delete(spotId)
-    mySpots.value = mySpots.value.filter((s: Spot) => s.id !== spotId)
+    await spotsAPI.delete(spotToDelete.value)
+    mySpots.value = mySpots.value.filter((s: Spot) => s.id !== spotToDelete.value)
     fetchSpotBookings() // Refresh stats after deletion
+    
+    // Show success notification
+    showSuccess('Spot deleted successfully', 'The camping spot has been removed from your listings.')
   } catch (error: any) {
-    alert(error.response?.data?.error || 'Failed to delete spot')
+    // Show error notification
+    showError('Failed to delete spot', error.response?.data?.error || 'An error occurred while deleting the spot.')
+  } finally {
+    showDeleteConfirm.value = false
+    spotToDelete.value = null
   }
+}
+
+const cancelDeleteSpot = () => {
+  showDeleteConfirm.value = false
+  spotToDelete.value = null
+}
+
+const showSuccess = (title: string, message: string) => {
+  notification.value = { type: 'success', title, message }
+  showNotification.value = true
+}
+
+const showError = (title: string, message: string) => {
+  notification.value = { type: 'error', title, message }
+  showNotification.value = true
+}
+
+const closeNotification = () => {
+  showNotification.value = false
 }
 
 const refreshDashboard = () => {

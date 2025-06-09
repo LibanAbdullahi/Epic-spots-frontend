@@ -211,10 +211,12 @@
             
             <form v-else @submit.prevent="handleBooking" class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="check-in-date" class="block text-sm font-medium text-gray-700 mb-2">
                   Check-in Date
                 </label>
                 <input
+                  id="check-in-date"
+                  aria-label="Check-in Date"
                   v-model="bookingForm.dateFrom"
                   type="date"
                   required
@@ -222,17 +224,33 @@
                   class="input"
                 />
               </div>
-              
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="check-out-date" class="block text-sm font-medium text-gray-700 mb-2">
                   Check-out Date
                 </label>
                 <input
+                  id="check-out-date"
+                  aria-label="Check-out Date"
                   v-model="bookingForm.dateTo"
                   type="date"
                   required
                   :min="bookingForm.dateFrom || today"
                   class="input"
+                />
+              </div>
+              <div>
+                <label for="number-of-guests" class="block text-sm font-medium text-gray-700 mb-2">
+                  Number of Guests
+                </label>
+                <input
+                  id="number-of-guests"
+                  aria-label="Number of Guests"
+                  v-model.number="bookingForm.guests"
+                  type="number"
+                  min="1"
+                  required
+                  class="input"
+                  placeholder="Enter number of guests"
                 />
               </div>
               
@@ -247,9 +265,13 @@
                 {{ bookingError }}
               </div>
               
+              <div v-if="dateValidationError" class="text-red-600 text-sm">
+                {{ dateValidationError }}
+              </div>
+              
               <button
                 type="submit"
-                :disabled="bookingLoading || !bookingForm.dateFrom || !bookingForm.dateTo"
+                :disabled="bookingLoading || !bookingForm.dateFrom || !bookingForm.dateTo || !isDateValid"
                 class="btn btn-primary w-full"
               >
                 <span v-if="bookingLoading">Booking...</span>
@@ -260,6 +282,15 @@
         </div>
       </div>
     </div>
+    
+    <!-- Notification Toast -->
+    <NotificationToast
+      :show="showNotification"
+      :type="notification.type"
+      :title="notification.title"
+      :message="notification.message"
+      @close="closeNotification"
+    />
   </div>
 </template>
 
@@ -268,6 +299,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { spotsAPI, bookingsAPI, ratingsAPI } from '@/services/api'
+import NotificationToast from '@/components/NotificationToast.vue'
 
 interface Rating {
   id: string
@@ -308,11 +340,20 @@ const ratingsLoading = ref(false)
 
 const bookingForm = reactive({
   dateFrom: '',
-  dateTo: ''
+  dateTo: '',
+  guests: 1
 })
 
 const bookingLoading = ref(false)
 const bookingError = ref('')
+
+// Notification state
+const showNotification = ref(false)
+const notification = ref({
+  type: 'info' as 'success' | 'error' | 'info',
+  title: '',
+  message: ''
+})
 
 const today = computed(() => {
   return new Date().toISOString().split('T')[0]
@@ -328,6 +369,23 @@ const nights = computed(() => {
 const totalPrice = computed(() => {
   if (!spot.value || nights.value <= 0) return 0
   return nights.value * spot.value.price
+})
+
+// Add date validation computed property
+const isDateValid = computed(() => {
+  if (!bookingForm.dateFrom || !bookingForm.dateTo) return true // Allow empty dates
+  const checkIn = new Date(bookingForm.dateFrom)
+  const checkOut = new Date(bookingForm.dateTo)
+  return checkOut > checkIn
+})
+
+// Add validation error message computed property
+const dateValidationError = computed(() => {
+  if (!bookingForm.dateFrom || !bookingForm.dateTo) return ''
+  if (!isDateValid.value) {
+    return 'Check-out date must be after check-in date'
+  }
+  return ''
 })
 
 const currentImageIndex = ref(0)
@@ -409,8 +467,13 @@ const handleBooking = async () => {
     
     console.log('Booking response:', response.data)
     
-    alert('Booking successful! Check your profile for booking details.')
-    router.push('/profile')
+    // Show success notification
+    showSuccess('Booking successful!', 'Check your profile for booking details.')
+    
+    // Navigate to profile after a short delay
+    setTimeout(() => {
+      router.push('/profile')
+    }, 2000)
   } catch (err: any) {
     console.error('Booking error:', err)
     bookingError.value = err.response?.data?.error || 'Booking failed'
@@ -428,6 +491,20 @@ const getImageUrl = (imagePath: string) => {
   return `http://localhost:3001${imagePath}`
 }
 
+const showSuccess = (title: string, message: string) => {
+  notification.value = { type: 'success', title, message }
+  showNotification.value = true
+}
+
+const showError = (title: string, message: string) => {
+  notification.value = { type: 'error', title, message }
+  showNotification.value = true
+}
+
+const closeNotification = () => {
+  showNotification.value = false
+}
+
 onMounted(() => {
   // Debug route information
   console.log('SpotDetails mounted')
@@ -438,4 +515,4 @@ onMounted(() => {
   
   fetchSpot()
 })
-</script> 
+</script>

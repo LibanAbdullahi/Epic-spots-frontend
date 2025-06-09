@@ -1,0 +1,18 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:5173",
+      "localStorage": [
+        {
+          "name": "auth_token",
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWJvb2NoMzQwMDAyMzRqMTUxcXIxM3djIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzQ5NDc3Mjk4LCJleHAiOjE3NTAwODIwOTh9.TzgLT9v1FYYUveceG7Ru15mckJ-KyAwSCis83YBtp0g"
+        },
+        {
+          "name": "user",
+          "value": "{\"id\":\"cmbooch34000234j151qr13wc\",\"name\":\"Test User\",\"email\":\"test@example.com\",\"role\":\"USER\"}"
+        }
+      ]
+    }
+  ]
+}

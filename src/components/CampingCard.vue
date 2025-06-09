@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-2 group">
+  <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 hover:-translate-y-2 group" data-testid="camping-card">
     <!-- Spot Image -->
     <div class="h-52 relative overflow-hidden" @click="$emit('click')">
       <img 
@@ -186,6 +186,7 @@ const getImageUrl = (imagePath: string) => {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  line-clamp: 2;
   overflow: hidden;
 }
-</style> 
+</style>

@@ -68,7 +68,7 @@
             </svg>
             Change Password
           </button>
-          <button @click="authStore.logout" class="btn btn-danger">
+          <button @click="handleLogout" class="btn btn-danger">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
             </svg>
@@ -245,6 +245,26 @@
       @close="closeRatingModal"
       @success="handleRatingSuccess"
     />
+    
+    <!-- Cancel Booking Confirmation Modal -->
+    <ConfirmationModal
+      :show="showCancelConfirm"
+      title="Cancel Booking"
+      message="Are you sure you want to cancel this booking? This action cannot be undone."
+      confirm-text="Cancel Booking"
+      cancel-text="Keep Booking"
+      @confirm="confirmCancelBooking"
+      @cancel="cancelCancelBooking"
+    />
+    
+    <!-- Notification Toast -->
+    <NotificationToast
+      :show="showNotification"
+      :type="notification.type"
+      :title="notification.title"
+      :message="notification.message"
+      @close="closeNotification"
+    />
   </div>
 </template>
 
@@ -254,6 +274,8 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { bookingsAPI } from '@/services/api'
 import RatingModal from '@/components/RatingModal.vue'
+import ConfirmationModal from '@/components/ConfirmationModal.vue'
+import NotificationToast from '@/components/NotificationToast.vue'
 
 interface Spot {
   id?: string
@@ -281,6 +303,16 @@ const showChangePassword = ref(false)
 const showRatingModal = ref(false)
 const selectedBooking = ref<Booking | null>(null)
 
+// Modal and notification states
+const showCancelConfirm = ref(false)
+const bookingToCancel = ref<number | null>(null)
+const showNotification = ref(false)
+const notification = ref({
+  type: 'info' as 'success' | 'error' | 'info',
+  title: '',
+  message: ''
+})
+
 const fetchBookings = async () => {
   loading.value = true
   error.value = ''
@@ -295,15 +327,32 @@ const fetchBookings = async () => {
   }
 }
 
-const cancelBooking = async (bookingId: number) => {
-  if (!confirm('Are you sure you want to cancel this booking?')) return
+const cancelBooking = (bookingId: number) => {
+  bookingToCancel.value = bookingId
+  showCancelConfirm.value = true
+}
+
+const confirmCancelBooking = async () => {
+  if (!bookingToCancel.value) return
   
   try {
-    await bookingsAPI.cancel(bookingId.toString())
-    bookings.value = bookings.value.filter((b: Booking) => b.id !== bookingId)
+    await bookingsAPI.cancel(bookingToCancel.value.toString())
+    bookings.value = bookings.value.filter((b: Booking) => b.id !== bookingToCancel.value)
+    
+    // Show success notification
+    showSuccess('Booking cancelled successfully', 'Your booking has been cancelled.')
   } catch (err: any) {
-    alert(err.response?.data?.error || 'Failed to cancel booking')
+    // Show error notification
+    showError('Failed to cancel booking', err.response?.data?.error || 'An error occurred while cancelling the booking.')
+  } finally {
+    showCancelConfirm.value = false
+    bookingToCancel.value = null
   }
+}
+
+const cancelCancelBooking = () => {
+  showCancelConfirm.value = false
+  bookingToCancel.value = null
 }
 
 const formatDate = (dateString: string) => {
@@ -355,8 +404,28 @@ const closeRatingModal = () => {
 }
 
 const handleRatingSuccess = () => {
-  alert('Rating submitted successfully!')
+  showSuccess('Rating submitted successfully!', 'Your rating has been saved.')
   closeRatingModal()
+}
+
+const showSuccess = (title: string, message: string) => {
+  notification.value = { type: 'success', title, message }
+  showNotification.value = true
+}
+
+const showError = (title: string, message: string) => {
+  notification.value = { type: 'error', title, message }
+  showNotification.value = true
+}
+
+const closeNotification = () => {
+  showNotification.value = false
+}
+
+const handleLogout = async () => {
+  authStore.logout()
+  // Force navigation to homepage
+  window.location.href = '/'
 }
 
 onMounted(() => {

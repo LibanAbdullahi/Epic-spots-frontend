@@ -67,4 +67,4 @@ dist/
 .env.development.local
 .env.production.local
 .env.test.local
-LINTING.md
+LINTING.mdplaywright/.auth

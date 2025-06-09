@@ -234,6 +234,7 @@
           @click="$router.push(`/spots/${spot.id}`)"
           @edit="handleEditSpot"
           @delete="handleDeleteSpot"
+          data-testid="camping-card"
         />
       </div>
 
@@ -335,6 +336,26 @@
       @close="showEditSpot = false"
       @updated="handleSpotUpdated"
     />
+    
+    <!-- Delete Confirmation Modal -->
+    <ConfirmationModal
+      :show="showDeleteConfirm"
+      title="Delete Camping Spot"
+      message="Are you sure you want to delete this camping spot? This action cannot be undone."
+      confirm-text="Delete"
+      cancel-text="Cancel"
+      @confirm="confirmDeleteSpot"
+      @cancel="cancelDeleteSpot"
+    />
+    
+    <!-- Notification Toast -->
+    <NotificationToast
+      :show="showNotification"
+      :type="notification.type"
+      :title="notification.title"
+      :message="notification.message"
+      @close="closeNotification"
+    />
   </div>
 </template>
 
@@ -347,6 +368,8 @@ import CampingCard from '@/components/CampingCard.vue'
 import CreateSpotModal from '@/components/CreateSpotModal.vue'
 import EditSpotModal from '@/components/EditSpotModal.vue'
 import MapComponent from '@/components/MapComponent.vue'
+import ConfirmationModal from '@/components/ConfirmationModal.vue'
+import NotificationToast from '@/components/NotificationToast.vue'
 import type { Spot } from '@/types'
 
 const router = useRouter()
@@ -361,6 +384,16 @@ const viewMode = ref<'grid' | 'map'>('grid')
 const showCreateSpot = ref(false)
 const showEditSpot = ref(false)
 const editingSpot = ref<Spot | null>(null)
+
+// Modal and notification states
+const showDeleteConfirm = ref(false)
+const spotToDelete = ref<string | null>(null)
+const showNotification = ref(false)
+const notification = ref({
+  type: 'info' as 'success' | 'error' | 'info',
+  title: '',
+  message: ''
+})
 
 // Computed
 const filteredSpots = computed(() => {
@@ -409,17 +442,46 @@ const handleSpotUpdated = () => {
   fetchSpots() // Refresh the list
 }
 
-const handleDeleteSpot = async (spotId: string) => {
-  if (!confirm('Are you sure you want to delete this camping spot? This action cannot be undone.')) {
-    return
-  }
+const handleDeleteSpot = (spotId: string) => {
+  spotToDelete.value = spotId
+  showDeleteConfirm.value = true
+}
+
+const confirmDeleteSpot = async () => {
+  if (!spotToDelete.value) return
   
   try {
-    await spotsAPI.delete(spotId)
-    spots.value = spots.value.filter(spot => spot.id !== spotId)
+    await spotsAPI.delete(spotToDelete.value)
+    spots.value = spots.value.filter(spot => spot.id !== spotToDelete.value)
+    
+    // Show success notification
+    showSuccess('Spot deleted successfully', 'The camping spot has been removed.')
   } catch (err: any) {
-    alert(err.response?.data?.error || 'Failed to delete spot')
+    // Show error notification
+    showError('Failed to delete spot', err.response?.data?.error || 'An error occurred while deleting the spot.')
+  } finally {
+    showDeleteConfirm.value = false
+    spotToDelete.value = null
   }
+}
+
+const cancelDeleteSpot = () => {
+  showDeleteConfirm.value = false
+  spotToDelete.value = null
+}
+
+const showSuccess = (title: string, message: string) => {
+  notification.value = { type: 'success', title, message }
+  showNotification.value = true
+}
+
+const showError = (title: string, message: string) => {
+  notification.value = { type: 'error', title, message }
+  showNotification.value = true
+}
+
+const closeNotification = () => {
+  showNotification.value = false
 }
 
 const handleMapSpotClick = (spot: Spot) => {
@@ -431,4 +493,4 @@ onMounted(() => {
   fetchSpots()
   authStore.initializeAuth()
 })
-</script> 
+</script>

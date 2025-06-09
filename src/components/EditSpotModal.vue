@@ -84,8 +84,64 @@
               <img :src="getImageUrl(image)" alt="Current image" class="w-full h-20 object-cover rounded-lg">
             </div>
           </div>
-          <p class="text-xs text-gray-500 mb-4">
-            Note: Image editing is not supported yet. To change images, please delete and recreate the spot.
+        </div>
+        
+        <!-- Add New Images -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Add New Images
+          </label>
+          <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+            <input
+              ref="fileInput"
+              type="file"
+              accept="image/*"
+              multiple
+              @change="handleFileSelect"
+              class="hidden"
+            />
+            
+            <!-- Upload Area -->
+            <div v-if="selectedFiles.length === 0">
+              <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <div class="mt-4">
+                <button type="button" @click="fileInput?.click()" class="btn btn-secondary">
+                  Choose Images
+                </button>
+                <p class="mt-2 text-sm text-gray-500">
+                  PNG, JPG, GIF up to 10MB each
+                </p>
+              </div>
+            </div>
+            
+            <!-- Selected Files Preview -->
+            <div v-else>
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div v-for="(file, index) in selectedFiles" :key="index" class="relative">
+                  <img :src="file.preview" alt="Preview" class="w-full h-20 object-cover rounded-lg">
+                  <button
+                    type="button"
+                    @click="removeFile(index)"
+                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+              <div class="flex justify-center space-x-2">
+                <button type="button" @click="fileInput?.click()" class="btn btn-secondary btn-sm">
+                  Add More
+                </button>
+                <button type="button" @click="clearFiles" class="btn btn-outline btn-sm">
+                  Clear All
+                </button>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">
+            Note: Adding new images will supplement your existing images, not replace them.
           </p>
         </div>
         
@@ -153,6 +209,8 @@ const form = reactive({
 
 const loading = ref(false)
 const error = ref('')
+const selectedFiles = ref<Array<{ file: File; preview: string }>>([])
+const fileInput = ref<HTMLInputElement>()
 
 // Initialize form with spot data
 onMounted(() => {
@@ -169,12 +227,75 @@ const getImageUrl = (imagePath: string) => {
   return `http://localhost:3001${imagePath}`
 }
 
+const handleFileSelect = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const files = target.files
+  
+  if (!files) return
+  
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i]
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      error.value = 'Please select only image files'
+      continue
+    }
+    
+    // Validate file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+      error.value = 'File size must be less than 10MB'
+      continue
+    }
+    
+    // Create preview
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      selectedFiles.value.push({
+        file,
+        preview: e.target?.result as string
+      })
+    }
+    reader.readAsDataURL(file)
+  }
+  
+  // Clear the input
+  target.value = ''
+}
+
+const removeFile = (index: number) => {
+  selectedFiles.value.splice(index, 1)
+}
+
+const clearFiles = () => {
+  selectedFiles.value = []
+}
+
 const submitForm = async () => {
   loading.value = true
   error.value = ''
   
   try {
-    await spotsAPI.update(props.spot.id, form)
+    // If there are new files, create FormData, otherwise use regular update
+    if (selectedFiles.value.length > 0) {
+      const formData = new FormData()
+      formData.append('title', form.title)
+      formData.append('location', form.location)
+      formData.append('price', form.price.toString())
+      formData.append('description', form.description)
+      
+      // Add images
+      selectedFiles.value.forEach(fileObj => {
+        formData.append('images', fileObj.file)
+      })
+      
+      // Use the same endpoint but with FormData for file uploads
+      await spotsAPI.update(props.spot.id, formData)
+    } else {
+      // Regular update without images
+      await spotsAPI.update(props.spot.id, form)
+    }
+    
     emit('updated')
   } catch (err: any) {
     error.value = err.response?.data?.error || 'Failed to update spot'
