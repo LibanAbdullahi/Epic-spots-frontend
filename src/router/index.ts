@@ -9,6 +9,8 @@ import SpotDetails from '@/views/SpotDetails.vue'
 import Profile from '@/views/Profile.vue'
 import OwnerDashboard from '@/views/OwnerDashboard.vue'
 import OAuthCallback from '@/views/OAuthCallback.vue'
+import ForgotPassword from '@/views/ForgotPassword.vue'
+import ResetPassword from '@/views/ResetPassword.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -34,6 +36,18 @@ const router = createRouter({
       path: '/login/callback',
       name: 'OAuthCallback',
       component: OAuthCallback
+    },
+    {
+      path: '/forgot-password',
+      name: 'ForgotPassword',
+      component: ForgotPassword,
+      meta: { requiresGuest: true }
+    },
+    {
+      path: '/reset-password',
+      name: 'ResetPassword',
+      component: ResetPassword,
+      meta: { requiresGuest: true }
     },
     {
       path: '/spots/:id',

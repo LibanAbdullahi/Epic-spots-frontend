@@ -238,6 +238,14 @@
       </div>
     </div>
     
+    <!-- Change Password Modal -->
+    <ChangePasswordModal
+      :show="showChangePassword"
+      @close="showChangePassword = false"
+      @success="handlePasswordChangeSuccess"
+      @error="handlePasswordChangeError"
+    />
+    
     <!-- Rating Modal -->
     <RatingModal 
       :show="showRatingModal"
@@ -276,6 +284,7 @@ import { bookingsAPI } from '@/services/api'
 import RatingModal from '@/components/RatingModal.vue'
 import ConfirmationModal from '@/components/ConfirmationModal.vue'
 import NotificationToast from '@/components/NotificationToast.vue'
+import ChangePasswordModal from '@/components/ChangePasswordModal.vue'
 
 interface Spot {
   id?: string
@@ -420,6 +429,15 @@ const showError = (title: string, message: string) => {
 
 const closeNotification = () => {
   showNotification.value = false
+}
+
+const handlePasswordChangeSuccess = (message: string) => {
+  showSuccess('Password Changed', message)
+  showChangePassword.value = false
+}
+
+const handlePasswordChangeError = (message: string) => {
+  showError('Password Change Failed', message)
 }
 
 const handleLogout = async () => {

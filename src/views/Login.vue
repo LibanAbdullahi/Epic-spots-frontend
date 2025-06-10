@@ -84,10 +84,16 @@
           <span v-else>Continue with Google</span>
         </button>
         
-        <div class="text-center text-sm text-gray-600">
-          <p>Demo accounts:</p>
-          <p>pieter@example.com / password123 (User)</p>
-          <p>marie@example.com / password123 (Owner)</p>
+        <div class="text-center space-y-3">
+          <router-link to="/forgot-password" class="text-sm text-primary-600 hover:text-primary-500 block">
+            Forgot your password?
+          </router-link>
+          
+          <div class="text-sm text-gray-600">
+            <p>Demo accounts:</p>
+            <p>pieter@example.com / password123 (User)</p>
+            <p>marie@example.com / password123 (Owner)</p>
+          </div>
         </div>
       </form>
     </div>

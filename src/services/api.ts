@@ -50,6 +50,10 @@ export const authAPI = {
   register: (data: any) => api.post('/auth/register', data),
   login: (data: any) => api.post('/auth/login', data),
   getProfile: () => api.get('/auth/profile'),
+  forgotPassword: (email: string) => api.post('/auth/forgot-password', { email }),
+  resetPassword: (token: string, newPassword: string) => api.post('/auth/reset-password', { token, newPassword }),
+  verifyResetToken: (token: string) => api.get(`/auth/verify-reset-token/${token}`),
+  changePassword: (currentPassword: string, newPassword: string) => api.put('/auth/change-password', { currentPassword, newPassword }),
 }
 
 export const spotsAPI = {
