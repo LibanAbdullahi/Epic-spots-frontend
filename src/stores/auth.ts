@@ -7,6 +7,7 @@ export interface User {
   name: string
   email: string
   role: 'USER' | 'OWNER'
+  avatar?: string
   createdAt: string
 }
 
@@ -105,6 +106,13 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const setAuthData = (authToken: string, userData: User) => {
+    user.value = userData
+    token.value = authToken
+    localStorage.setItem('auth_token', authToken)
+    localStorage.setItem('user', JSON.stringify(userData))
+  }
+
   return {
     user,
     token,
@@ -115,6 +123,7 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     initializeAuth,
-    fetchProfile
+    fetchProfile,
+    setAuthData
   }
 }) 

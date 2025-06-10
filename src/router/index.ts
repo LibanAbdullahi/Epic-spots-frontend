@@ -8,6 +8,7 @@ import Register from '@/views/Register.vue'
 import SpotDetails from '@/views/SpotDetails.vue'
 import Profile from '@/views/Profile.vue'
 import OwnerDashboard from '@/views/OwnerDashboard.vue'
+import OAuthCallback from '@/views/OAuthCallback.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -28,6 +29,11 @@ const router = createRouter({
       name: 'Register',
       component: Register,
       meta: { requiresGuest: true }
+    },
+    {
+      path: '/login/callback',
+      name: 'OAuthCallback',
+      component: OAuthCallback
     },
     {
       path: '/spots/:id',
